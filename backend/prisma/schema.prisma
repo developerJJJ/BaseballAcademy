@@ -27,9 +27,31 @@ enum Frequency {
 }
 
 enum AthleteGroup {
-  YOUTH
+  YOUTH_10_12
+  YOUTH_13_15
   HS
   ADULT
+}
+
+enum WorkoutType {
+  A_LOWER
+  B_UPPER
+  C_SPEED
+  D_RECOVERY
+}
+
+enum SessionDuration {
+  MIN_45
+  MIN_60
+  MIN_75
+}
+
+enum DrillCategory {
+  MOVEMENT
+  SPRINT
+  JUMP
+  THROWING
+  CONDITIONING
 }
 
 model Academy {
@@ -82,7 +104,7 @@ model Drill {
   id          Int      @id @default(autoincrement())
   name        String
   description String?
-  category    String?
+  category    DrillCategory
   academy     Academy  @relation(fields: [academyId], references: [id])
   academyId   Int
   templates   TemplateDrill[]
@@ -91,6 +113,8 @@ model Drill {
 model SessionTemplate {
   id          Int      @id @default(autoincrement())
   name        String
+  workoutType WorkoutType @default(A_LOWER)
+  duration    SessionDuration @default(MIN_60)
   academy     Academy  @relation(fields: [academyId], references: [id])
   academyId   Int
   drills      TemplateDrill[]
@@ -139,7 +163,13 @@ model Attendance {
   id        Int      @id @default(autoincrement())
   sessionId Int
   athleteId Int
-  status    String   // PRESENT, ABSENT, EXCUSED
+  status    String   // PRESENT, ABSENT, EXCUSED, PENDING
+  
+  // Mandatory 10-second check data
+  conditionScore Int?    // 1-5
+  hasPain        Boolean @default(false)
+  isForcedToD    Boolean @default(false)
+  
   notes     String?
   session   Session  @relation(fields: [sessionId], references: [id])
   athlete   AthleteProfile @relation(fields: [athleteId], references: [id])

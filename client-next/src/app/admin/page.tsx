@@ -29,7 +29,7 @@ export default function AdminDashboard() {
 
       <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="bg-slate-900 p-4 flex justify-between items-center">
-          <h2 className="text-white font-bold">Operation Rules (System Core)</h2>
+          <h2 className="text-white font-bold">SOP Classification Rules (System Core)</h2>
           <button className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded hover:bg-blue-500 transition-colors">
             + New Rule
           </button>
@@ -53,7 +53,12 @@ export default function AdminDashboard() {
                    </div>
                 </td>
                 <td className="p-4 font-medium text-slate-700">HS_L1_2X_TEMPLATE</td>
-                <td className="p-4 text-slate-400 text-sm">Max load: 75%</td>
+                <td className="p-4 text-slate-400 text-sm">
+                   <div className="flex flex-col gap-1">
+                      <span>Max load: 75%</span>
+                      <span className="text-[10px] uppercase font-bold text-slate-300">Composition: Skill, Conditioning, Strength</span>
+                   </div>
+                </td>
               </tr>
               <tr className="bg-slate-50/50 italic text-slate-400">
                 <td colSpan={3} className="p-8 text-center text-xs">

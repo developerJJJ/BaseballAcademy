@@ -3,12 +3,21 @@
 A rule-based operations system designed to automate baseball academy management, ensuring consistent training execution regardless of coach personnel. 
 
 ## 🏟️ Project Vision
-This is a **vertical ERP for sports academies**. Unlike generic training apps, this system encodes academy operations into a **Rule Engine** that maps athlete classification (Level, Frequency, Group) to automated session generation.
+This is a **vertical ERP for sports academies**. Unlike generic training apps, this system encodes academy operations into a **Rule Engine** that maps athlete classification to automated session generation.
 
-## 🛠️ Tech Stack
-- **Frontend**: Next.js 15+ (App Router), Tailwind CSS, TypeScript.
-- **Backend**: Express.js, Prisma ORM, SQLite, TypeScript.
-- **Architecture**: Multi-tenant aware from day one.
+### 🎯 Scope & Composition (Background)
+* **Target Audience**: 10 years old ~ High School ~ Adult
+* **Frequency Options**: 1x | 2x | 4–5x per week
+* **Training Composition**:
+    * **Training Drills**: Skill & Conditioning
+    * **Workouts**: Strength, Power, Speed, and Recovery
+* **Goal**: Enable consistent academy operations without coach decision dependency.
+
+### 📋 Mandatory Classification (Required Inputs)
+For 100% automated operations, every athlete MUST be classified by these 3 fields:
+1. **Level**: L0 | L1 | L2
+2. **Frequency**: 1x | 2x | 4–5x
+3. **Group**: Youth | HS | Adult (or Age Bands)
 
 ---
 

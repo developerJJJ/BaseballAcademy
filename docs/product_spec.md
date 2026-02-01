@@ -1,13 +1,13 @@
 # Baseball Academy Operations Platform
 ### Developer Product Specification (MVP with Scale-Ready Architecture)
 
-## 1. Product Intent
-This project is **not a training content app**. It is a **rule-based operations system** for running a baseball academy consistently.
-
-### Primary Goal (MVP)
-* Serve **one specific academy**
-* Remove coach dependency
-* Automate scheduling, training execution, and evaluation
+## 1. Product Intent / Scope (Background)
+*   **Target Age**: 10 years old ~ High School ~ Adult
+*   **Frequencies**: 1x / 2x / 4–5x per week
+*   **Composition**: 
+    *   Training Drills (Skill / Conditioning)
+    *   Workouts (Strength / Power / Speed / Recovery)
+*   **Primary Goal**: Automated operation via rules + templates, removing coach decision dependency.
 
 ### Long-Term Goal
 * Support **multiple academies (multi-tenant)**

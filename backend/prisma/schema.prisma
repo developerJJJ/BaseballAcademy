@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  COACH
+  ATHLETE
+  PARENT
+}
+
+enum Level {
+  L0
+  L1
+  L2
+}
+
+enum Frequency {
+  F1X
+  F2X
+  F4_5X
+}
+
+enum AthleteGroup {
+  YOUTH
+  HS
+  ADULT
+}
+
+model Academy {
+  id        Int      @id @default(autoincrement())
+  name      String
+  users     User[]
+  drills    Drill[]
+  templates SessionTemplate[]
+  rules     Rule[]
+  sessions  Session[]
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  password      String
+  role          Role
+  firstName     String
+  lastName      String
+  academy       Academy  @relation(fields: [academyId], references: [id])
+  academyId     Int
+
+  // Relations
+  athleteProfile  AthleteProfile?
+  coachedSessions Session[] @relation("CoachSessions")
+  parentOf        ParentAthlete[] @relation("ParentToAthlete")
+  athleteOf       ParentAthlete[] @relation("AthleteToParent")
+}
+
+model AthleteProfile {
+  id         Int          @id @default(autoincrement())
+  userId     Int          @unique
+  user       User         @relation(fields: [userId], references: [id])
+  level      Level
+  frequency  Frequency
+  group      AthleteGroup
+  attendance Attendance[]
+}
+
+model ParentAthlete {
+  parentId  Int
+  athleteId Int
+  parent    User @relation("ParentToAthlete", fields: [parentId], references: [id])
+  athlete   User @relation("AthleteToParent", fields: [athleteId], references: [id])
+
+  @@id([parentId, athleteId])
+}
+
+model Drill {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  category    String?
+  academy     Academy  @relation(fields: [academyId], references: [id])
+  academyId   Int
+  templates   TemplateDrill[]
+}
+
+model SessionTemplate {
+  id          Int      @id @default(autoincrement())
+  name        String
+  academy     Academy  @relation(fields: [academyId], references: [id])
+  academyId   Int
+  drills      TemplateDrill[]
+  rules       Rule[]
+  sessions    Session[]
+}
+
+model TemplateDrill {
+  id                Int             @id @default(autoincrement())
+  templateId        Int
+  drillId           Int
+  order             Int
+  sets              String?
+  reps              String?
+  notes             String?
+  template          SessionTemplate @relation(fields: [templateId], references: [id])
+  drill             Drill           @relation(fields: [drillId], references: [id])
+}
+
+model Rule {
+  id                Int             @id @default(autoincrement())
+  level             Level
+  frequency         Frequency
+  group             AthleteGroup
+  sessionTemplateId Int
+  template          SessionTemplate @relation(fields: [sessionTemplateId], references: [id])
+  academy           Academy         @relation(fields: [academyId], references: [id])
+  academyId         Int
+
+  @@unique([academyId, level, frequency, group])
+}
+
+model Session {
+  id                Int             @id @default(autoincrement())
+  date              DateTime
+  templateId        Int
+  template          SessionTemplate @relation(fields: [templateId], references: [id])
+  coachId           Int
+  coach             User            @relation("CoachSessions", fields: [coachId], references: [id])
+  academyId         Int
+  academy           Academy         @relation(fields: [academyId], references: [id])
+  attendance        Attendance[]
+}
+
+model Attendance {
+  id        Int      @id @default(autoincrement())
+  sessionId Int
+  athleteId Int
+  status    String   // PRESENT, ABSENT, EXCUSED
+  notes     String?
+  session   Session  @relation(fields: [sessionId], references: [id])
+  athlete   AthleteProfile @relation(fields: [athleteId], references: [id])
+}

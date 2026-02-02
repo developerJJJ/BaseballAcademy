@@ -1,0 +1,22 @@
+{
+  "name": "baseball-academy",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "client-next"
+  ],
+  "scripts": {
+    "install-all": "npm install",
+    "build": "npm run build -w backend && npm run build -w client-next",
+    "build:backend": "npm run build -w backend",
+    "build:frontend": "npm run build -w client-next",
+    "start:backend": "npm start -w backend",
+    "start:frontend": "npm start -w client-next",
+    "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w client-next\"",
+    "render-build": "npm install && npm run build"
+  },
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

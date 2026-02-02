@@ -6,6 +6,9 @@
     "backend",
     "client-next"
   ],
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "install-all": "npm install",
     "build": "npm run build -w backend && npm run build -w client-next",

@@ -6,8 +6,8 @@ export default function Navbar() {
   return (
     <nav className="bg-slate-900 text-white p-4 flex justify-between items-center shadow-lg">
       <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center font-bold">B</div>
-        <span className="font-bold text-xl tracking-tight">Elite Baseball</span>
+        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center font-bold text-white">B</div>
+        <span className="font-bold text-xl tracking-tight">Baseball Academy</span>
       </Link>
       <div className="flex gap-6 items-center">
         <Link href="/coach" className="hover:text-blue-400 transition-colors">Coach</Link>

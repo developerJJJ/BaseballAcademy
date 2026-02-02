@@ -4,6 +4,11 @@ import dotenv from 'dotenv';
 
 import attendanceRouter from './routes/attendance';
 import sessionRouter from './routes/session';
+import drillsRouter from './routes/drills';
+import goalsRouter from './routes/goals';
+import rapsodoRouter from './routes/rapsodo';
+import parentRouter from './routes/parent';
+import rulesRouter from './routes/rules';
 
 dotenv.config();
 
@@ -15,6 +20,11 @@ app.use(express.json());
 
 app.use('/api/sessions', sessionRouter);
 app.use('/api/attendance', attendanceRouter);
+app.use('/api/drills', drillsRouter);
+app.use('/api/goals', goalsRouter);
+app.use('/api/rapsodo', rapsodoRouter);
+app.use('/api/parent', parentRouter);
+app.use('/api/rules', rulesRouter);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

@@ -44,6 +44,8 @@ enum SessionDuration {
   MIN_45
   MIN_60
   MIN_75
+  MIN_90
+  MIN_120
 }
 
 enum DrillCategory {
@@ -89,6 +91,8 @@ model AthleteProfile {
   frequency  Frequency
   group      AthleteGroup
   attendance Attendance[]
+  weeklyGoals WeeklyGoal[]
+  rapsodoData RapsodoData[]
 }
 
 model ParentAthlete {
@@ -101,10 +105,20 @@ model ParentAthlete {
 }
 
 model Drill {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  category    DrillCategory
+  id            Int      @id @default(autoincrement())
+  name          String
+  nameEn        String?
+  description   String?
+  descriptionEn String?
+  category      DrillCategory
+  videoUrl    String?
+  difficulty  Int      @default(1) // 1-10
+  cue1        String?
+  cue2        String?
+  cue3        String?
+  baseReps    String?
+  baseSets    String?
+  baseRest    String?
   academy     Academy  @relation(fields: [academyId], references: [id])
   academyId   Int
   templates   TemplateDrill[]
@@ -168,9 +182,52 @@ model Attendance {
   // Mandatory 10-second check data
   conditionScore Int?    // 1-5
   hasPain        Boolean @default(false)
-  isForcedToD    Boolean @default(false)
+  painArea       String? // e.g. "Shoulder", "Elbow"
+  workedOutYesterday Boolean @default(false)
+  sleepHours         Int?
+  sleepQuality       String?
+  selectedProgram    String? // elite, beginner
+  isForcedToD        Boolean @default(false)
   
   notes     String?
   session   Session  @relation(fields: [sessionId], references: [id])
   athlete   AthleteProfile @relation(fields: [athleteId], references: [id])
+  drillCompletions DrillCompletion[]
+}
+
+model DrillCompletion {
+  id           Int      @id @default(autoincrement())
+  attendanceId Int
+  drillId      Int      // The drill within the template
+  completedAt  DateTime @default(now())
+  
+  attendance   Attendance @relation(fields: [attendanceId], references: [id])
+}
+
+model WeeklyGoal {
+  id          Int      @id @default(autoincrement())
+  athleteId   Int
+  athlete     AthleteProfile @relation(fields: [athleteId], references: [id])
+  goalType    String   // e.g. "Bat Speed", "Weight"
+  targetValue Float
+  currentValue Float
+  memo        String?
+  status      String   @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model RapsodoData {
+  id            Int      @id @default(autoincrement())
+  athleteId     Int
+  athlete       AthleteProfile @relation(fields: [athleteId], references: [id])
+  date          DateTime @default(now())
+  batSpeed      Float?
+  exitVelocity  Float?
+  launchAngle   Float?
+  distance      Float?
+  attackAngle   Float?
+  contactTime   Float?
+  memo          String?
+  createdAt     DateTime @default(now())
 }

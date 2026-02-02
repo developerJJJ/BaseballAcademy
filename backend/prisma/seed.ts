@@ -3,115 +3,68 @@ import { PrismaClient, Role, Level, Frequency, AthleteGroup, DrillCategory, Work
 const prisma = new PrismaClient();
 
 async function main() {
-  // Clear existing data (optional but recommended for clean seed)
-  // await prisma.attendance.deleteMany();
-  // ... and so on
+  // Clear existing data in correct order
+  await prisma.drillCompletion.deleteMany();
+  await prisma.attendance.deleteMany();
+  await prisma.session.deleteMany();
+  await prisma.rule.deleteMany();
+  await prisma.templateDrill.deleteMany();
+  await prisma.sessionTemplate.deleteMany();
+  await prisma.drill.deleteMany();
+  await prisma.weeklyGoal.deleteMany();
+  await prisma.rapsodoData.deleteMany();
+  await prisma.parentAthlete.deleteMany();
+  await prisma.athleteProfile.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.academy.deleteMany();
 
   // Academy 1
-  const academy = await prisma.academy.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      id: 1,
-      name: 'Elite Baseball Academy',
-    },
+  const academy = await prisma.academy.create({
+    data: { id: 1, name: 'King Kang Baseball Academy' },
   });
 
-  // Admin
-  await prisma.user.upsert({
-    where: { email: 'admin@elite.com' },
-    update: {},
-    create: {
+  // Admin (ID 8)
+  await prisma.user.create({
+    data: {
+      id: 8,
       email: 'admin@elite.com',
       password: 'password123',
       role: Role.ADMIN,
-      firstName: 'James',
-      lastName: 'Director',
+      firstName: '제임스',
+      lastName: '원장',
       academyId: 1,
     },
   });
 
-  // Coach
-  const coach = await prisma.user.upsert({
-    where: { email: 'coach1@elite.com' },
-    update: {},
-    create: {
+  // Coach (ID 5)
+  const coach = await prisma.user.create({
+    data: {
+      id: 5,
       email: 'coach1@elite.com',
       password: 'password123',
       role: Role.COACH,
-      firstName: 'John',
-      lastName: 'Coach',
+      firstName: '박코치',
+      lastName: '',
       academyId: 1,
     },
   });
 
-  // Drills with SOP Categories
-  const drillsData = [
-    { name: 'Linear Acceleration', category: DrillCategory.SPRINT, desc: '60ft sprints' },
-    { name: 'Box Jumps', category: DrillCategory.JUMP, desc: 'L0 focusing on landing safety' },
-    { name: 'Long Toss', category: DrillCategory.THROWING, desc: 'Arm care emphasis' },
-    { name: 'Hip Mobility', category: DrillCategory.MOVEMENT, desc: 'Standard movement drills' },
-    { name: 'Medicine Ball Rotational', category: DrillCategory.CONDITIONING, desc: 'Rotational power' },
-  ];
-
-  const drills = [];
-  for (const d of drillsData) {
-    const drill = await prisma.drill.create({
-      data: {
-        name: d.name,
-        category: d.category,
-        description: d.desc,
-        academyId: 1,
-      },
-    });
-    drills.push(drill);
-  }
-
-  // Templates for A/B/C/D Menu
-  const templates = [
-    { name: 'HS_L1_60m_A_Lower', type: WorkoutType.A_LOWER, duration: SessionDuration.MIN_60 },
-    { name: 'HS_L1_60m_B_Upper', type: WorkoutType.B_UPPER, duration: SessionDuration.MIN_60 },
-    { name: 'HS_L1_60m_C_Speed', type: WorkoutType.C_SPEED, duration: SessionDuration.MIN_60 },
-    { name: 'RECOVERY_D_STANDARD', type: WorkoutType.D_RECOVERY, duration: SessionDuration.MIN_60 },
-  ];
-
-  const createdTemplates = [];
-  for (const t of templates) {
-    const template = await prisma.sessionTemplate.create({
-      data: {
-        name: t.name,
-        workoutType: t.type,
-        duration: t.duration,
-        academyId: 1,
-        drills: {
-          create: [
-            { drillId: drills[0].id, order: 1, sets: '3', reps: '5' },
-            { drillId: drills[1].id, order: 2, sets: '4', reps: '10' },
-          ],
-        },
-      },
-    });
-    createdTemplates.push(template);
-  }
-
-  // Athlete Bobby
-  const athleteUser = await prisma.user.upsert({
-    where: { email: 'athlete1@elite.com' },
-    update: {},
-    create: {
+  // Athlete (ID 6) - 김민수
+  const athleteUser = await prisma.user.create({
+    data: {
+      id: 6,
       email: 'athlete1@elite.com',
       password: 'password123',
       role: Role.ATHLETE,
-      firstName: 'Bobby',
-      lastName: 'Ballplayer',
+      firstName: '김민수',
+      lastName: '',
       academyId: 1,
     },
   });
 
-  const athleteProfile = await prisma.athleteProfile.upsert({
-    where: { userId: athleteUser.id },
-    update: {},
-    create: {
+  const athleteProfile = await prisma.athleteProfile.create({
+    data: {
+      id: 5, // profile id
       userId: athleteUser.id,
       level: Level.L1,
       frequency: Frequency.F2X,
@@ -119,50 +72,102 @@ async function main() {
     },
   });
 
-  // Basic Rule mapping for Bobby (HS/L1/2x) -> A_LOWER today
-  await prisma.rule.upsert({
-    where: {
-      academyId_level_frequency_group: {
-        academyId: 1,
-        level: Level.L1,
-        frequency: Frequency.F2X,
-        group: AthleteGroup.HS,
-      },
-    },
-    update: {},
-    create: {
+  // Parent (ID 9) - 김학부모
+  const parentUser = await prisma.user.create({
+    data: {
+      id: 9,
+      email: 'parent1@elite.com',
+      password: 'password123',
+      role: Role.PARENT,
+      firstName: '김학부모',
+      lastName: '',
       academyId: 1,
-      level: Level.L1,
-      frequency: Frequency.F2X,
-      group: AthleteGroup.HS,
-      sessionTemplateId: createdTemplates[0].id,
+    }
+  });
+
+  // Link Parent to Athlete
+  await prisma.parentAthlete.create({
+    data: {
+      parentId: parentUser.id,
+      athleteId: athleteUser.id
+    }
+  });
+
+  // Drills
+  const drillsData = [
+    { name: '데드리프트', nameEn: 'Deadlift', category: DrillCategory.CONDITIONING, desc: '후면 체인 강화를 위한 데드리프트', descEn: 'Deadlift for strengthening the posterior chain', reps: '10', sets: '4', rest: '180' },
+    { name: '메디신볼 슬램', nameEn: 'Medicine Ball Slam', category: DrillCategory.CONDITIONING, desc: '폭발적인 파워 발달을 위한 메디신볼 운동', descEn: 'Medicine ball exercise for explosive power development', reps: '15', sets: '3', rest: '120' },
+    { name: '라이브 BP', nameEn: 'Live BP', category: DrillCategory.THROWING, desc: '실전과 유사한 투구를 받아 타격 연습', descEn: 'Batting practice receiving pitches similar to real games', reps: '10', sets: '3', rest: '180' },
+    { name: '배트 스피드 드릴', nameEn: 'Bat Speed Drill', category: DrillCategory.THROWING, desc: '가벼운 배트로 스윙 속도 향상', descEn: 'Improving swing speed with a light bat', reps: '25', sets: '3', rest: '90' },
+    { name: '소프트 토스', nameEn: 'Soft Toss', category: DrillCategory.THROWING, desc: '측면에서 던져진 공을 타격하여 손-눈 협응력 향상', descEn: 'Improving hand-eye coordination by hitting balls tossed from the side', reps: '15', sets: '3', rest: '90' },
+    { name: '불펜 투구', nameEn: 'Bullpen Session', category: DrillCategory.CONDITIONING, desc: '실전 투구 연습', descEn: 'Real-game pitching practice', reps: '30', sets: '2', rest: '300' },
+  ];
+
+  const drillIds: number[] = [];
+  for (const d of drillsData) {
+    const drill = await prisma.drill.create({
+      data: { 
+        name: d.name, 
+        nameEn: d.nameEn,
+        category: d.category, 
+        description: d.desc, 
+        descriptionEn: d.descEn,
+        baseReps: d.reps, 
+        baseSets: d.sets, 
+        baseRest: d.rest, 
+        academyId: 1 
+      },
+    });
+    drillIds.push(drill.id);
+  }
+
+  const types = [WorkoutType.A_LOWER, WorkoutType.B_UPPER, WorkoutType.C_SPEED, WorkoutType.D_RECOVERY];
+  const durations = [SessionDuration.MIN_45, SessionDuration.MIN_60, SessionDuration.MIN_75, SessionDuration.MIN_90, SessionDuration.MIN_120];
+
+  const templateMap: any = {};
+  for (const type of types) {
+    for (const duration of durations) {
+      const template = await prisma.sessionTemplate.create({
+        data: {
+          name: `${type}_${duration}_TEMPLATE`,
+          workoutType: type,
+          duration: duration,
+          academyId: 1,
+          drills: {
+            create: drillsData.map((d, i) => ({
+              drillId: drillIds[i],
+              order: i + 1,
+              sets: d.sets,
+              reps: d.reps,
+              notes: d.rest
+            }))
+          }
+        }
+      });
+      templateMap[`${type}_${duration}`] = template.id;
+    }
+  }
+
+  // Rule mapping
+  await prisma.rule.create({
+    data: {
+      academyId: 1, level: Level.L1, frequency: Frequency.F2X, group: AthleteGroup.HS,
+      sessionTemplateId: templateMap[`${WorkoutType.A_LOWER}_${SessionDuration.MIN_120}`],
     },
   });
 
-  // Example Session for Today
+  // Today's Session
   await prisma.session.create({
     data: {
       date: new Date(),
-      templateId: createdTemplates[0].id,
+      templateId: templateMap[`${WorkoutType.A_LOWER}_${SessionDuration.MIN_120}`],
       coachId: coach.id,
       academyId: 1,
-      attendance: {
-        create: {
-          athleteId: athleteProfile.id,
-          status: 'PENDING',
-        },
-      },
+      attendance: { create: { athleteId: athleteProfile.id, status: 'PENDING' } },
     },
   });
 
-  console.log('Seed completed with SOP architecture.');
+  console.log('Seed completed with correct names and links.');
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch((e) => { console.error(e); process.exit(1); }).finally(async () => { await prisma.$disconnect(); });

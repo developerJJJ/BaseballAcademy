@@ -2,21 +2,68 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, User, Shield, ClipboardList, LogOut, Menu } from 'lucide-react';
+import { 
+  LayoutDashboard, 
+  User, 
+  Shield, 
+  ClipboardList, 
+  LogOut, 
+  Menu, 
+  BookOpen, 
+  Target, 
+  CheckCircle2,
+  Users,
+  BarChart3,
+  FileText
+} from 'lucide-react';
 import { useState } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Sidebar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
+  const { user, logout } = useAuth();
 
-  const navItems = [
-    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-    { name: 'Coach', href: '/coach', icon: ClipboardList },
-    { name: 'Athlete', href: '/athlete', icon: User },
-    { name: 'Admin', href: '/admin', icon: Shield },
+  const athleteItems = [
+    { name: t('sidebar.dashboard'), href: '/', icon: LayoutDashboard },
+    { name: t('sidebar.checkin'), href: '/athlete/checkin', icon: CheckCircle2 },
+    { name: t('sidebar.playbook'), href: '/athlete', icon: BookOpen },
+    { name: t('sidebar.weekly_goals'), href: '#', icon: Target },
   ];
 
-  // Hide Sidebar on Role Selection Page (Root)
+  const coachItems = [
+    { name: t('sidebar.dashboard'), href: '/coach', icon: LayoutDashboard },
+    { name: t('sidebar.player_management'), href: '/coach', icon: Users },
+    { name: t('sidebar.drill_templates'), href: '/coach/drills', icon: FileText },
+    { name: t('sidebar.weekly_goal_setting'), href: '/coach/goals', icon: Target },
+    { name: t('sidebar.rapsodo_data'), href: '/coach/rapsodo', icon: BarChart3 },
+  ];
+
+  const parentItems = [
+    { name: t('sidebar.dashboard'), href: '/parent', icon: LayoutDashboard },
+  ];
+
+  const adminItems = [
+    { name: t('sidebar.dashboard'), href: '/admin', icon: LayoutDashboard },
+    ...coachItems.slice(1),
+  ];
+
+  let navItems = athleteItems;
+  let displayRole = "선수";
+
+  if (user?.role === 'COACH') {
+    navItems = coachItems;
+    displayRole = "코치";
+  } else if (user?.role === 'PARENT') {
+    navItems = parentItems;
+    displayRole = "학부모";
+  } else if (user?.role === 'ADMIN') {
+    navItems = adminItems;
+    displayRole = "관리자";
+  }
+
   if (pathname === '/') return null;
 
   return (
@@ -33,26 +80,30 @@ export default function Sidebar() {
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Header / Logo */}
-        <div className="p-6 border-b border-slate-100">
+        <div className="p-8 border-b border-slate-50">
           <Link href="/" className="flex flex-col gap-1 items-start hover:opacity-80 transition-opacity">
-            <h1 className="text-xl font-bold text-blue-600 tracking-tight">Kingkang Baseball Academy</h1>
-            <p className="text-xs text-slate-500 font-medium">Academy Operations</p>
+            <h1 className="text-2xl font-black text-blue-700 tracking-tight leading-tight">
+              {t('sidebar.brand').split(' ').map((word, i) => (
+                <span key={i} className="block">{word}</span>
+              ))}
+            </h1>
+            <p className="text-sm text-slate-400 font-bold mt-1">{user?.name || "사용자"} ({displayRole})</p>
           </Link>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+        <nav className="flex-1 overflow-y-auto py-8 px-4 space-y-2">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
-                key={item.href}
+                key={item.name}
                 href={item.href}
                 className={`
-                  flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                  flex items-center gap-4 px-4 py-3 rounded-xl text-md font-bold transition-all
                   ${isActive 
-                    ? 'bg-blue-50 text-blue-700' 
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}
+                    ? 'bg-slate-50 text-slate-900 shadow-sm' 
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}
                 `}
               >
                 <item.icon className={`w-5 h-5 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
@@ -62,11 +113,15 @@ export default function Sidebar() {
           })}
         </nav>
 
-        {/* User / Logout */}
-        <div className="p-4 border-t border-slate-100">
-          <Link href="/" className="flex items-center gap-3 px-3 py-2 w-full rounded-lg text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors">
-            <LogOut className="w-5 h-5" />
-            Logout
+        {/* Logout */}
+        <div className="p-6 border-t border-slate-50">
+          <Link 
+            href="/" 
+            onClick={logout}
+            className="flex items-center justify-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-bold text-slate-600 border border-slate-100 hover:bg-slate-50 transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            {t('sidebar.logout')}
           </Link>
         </div>
       </aside>

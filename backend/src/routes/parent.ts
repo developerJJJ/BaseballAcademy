@@ -36,14 +36,14 @@ router.get('/children', authorize([Role.PARENT]), async (req: AuthRequest, res) 
     }
   });
 
-  const childrenData = links.map(link => {
+  const childrenData = links.map((link: any) => {
     const profile = link.athlete.athleteProfile!;
     const attendance = profile.attendance;
     
     // Calculate simple stats
-    const totalDrills = attendance.reduce((sum, att) => sum + att.session.template.drills.length, 0);
-    const completedDrills = attendance.reduce((sum, att) => sum + att.drillCompletions.length, 0);
-    const totalTrainingTime = attendance.reduce((sum, att) => {
+    const totalDrills = attendance.reduce((sum: number, att: any) => sum + att.session.template.drills.length, 0);
+    const completedDrills = attendance.reduce((sum: number, att: any) => sum + att.drillCompletions.length, 0);
+    const totalTrainingTime = attendance.reduce((sum: number, att: any) => {
         const duration = att.session.template.duration;
         const mins = duration === 'MIN_120' ? 120 : duration === 'MIN_75' ? 75 : 60;
         return sum + mins;
@@ -60,7 +60,7 @@ router.get('/children', authorize([Role.PARENT]), async (req: AuthRequest, res) 
         totalDrills: totalDrills,
         completionRate: totalDrills > 0 ? Math.round((completedDrills / totalDrills) * 100) : 0
       },
-      history: attendance.map(att => ({
+      history: attendance.map((att: any) => ({
         date: att.session.date,
         status: att.status
       }))

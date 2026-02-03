@@ -14,6 +14,7 @@
     "build": "npm run build -w backend && npm run build -w client-next",
     "build:backend": "npm run build -w backend",
     "build:frontend": "npm run build -w client-next",
+    "start": "concurrently \"PORT=${BACKEND_PORT:-5000} npm start -w backend\" \"npm start -w client-next\"",
     "start:backend": "npm start -w backend",
     "start:frontend": "npm start -w client-next",
     "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w client-next\"",

@@ -52,11 +52,11 @@ router.get('/athlete', authorize([Role.ATHLETE]), async (req: AuthRequest, res) 
   });
   
   // Flatten to include completions in the session object for frontend ease
-  res.json(attendance.map(a => ({
+  res.json(attendance.map((a: any) => ({
     ...a.session,
     attendanceId: a.id,
     selectedProgram: a.selectedProgram,
-    completedDrillIds: a.drillCompletions.map(c => c.drillId)
+    completedDrillIds: a.drillCompletions.map((c: any) => c.drillId)
   })));
 });
 

@@ -69,7 +69,7 @@ export default function Sidebar() {
   return (
     <>
       <button 
-        className="lg:hidden fixed top-4 right-4 z-50 p-2 bg-white rounded-md shadow-md"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-md"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       >
         <Menu className="w-6 h-6" />

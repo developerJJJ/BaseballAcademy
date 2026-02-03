@@ -3,11 +3,23 @@ import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import Database from 'better-sqlite3';
 import dotenv from 'dotenv';
 
+import path from 'path';
+
 dotenv.config();
 
-const dbPath = process.env.DATABASE_URL?.replace('file:', '') || './prisma/dev.db';
+const getDbPath = () => {
+    if (process.env.DATABASE_URL) {
+        return path.resolve(process.cwd(), process.env.DATABASE_URL.replace('file:', ''));
+    }
+    const relativePath = process.cwd().endsWith('backend') ? 'prisma/dev.db' : 'backend/prisma/dev.db';
+    return path.resolve(process.cwd(), relativePath);
+};
+
+const dbPath = getDbPath();
+console.log('--- SEED Resolved Database Path:', dbPath);
 const adapter = new PrismaBetterSqlite3({ url: dbPath });
 const prisma = new PrismaClient({ adapter });
+console.log('--- SEED Prisma Client Active ---');
 
 async function main() {
   // Clear existing data in correct order

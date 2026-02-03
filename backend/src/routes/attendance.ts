@@ -8,6 +8,7 @@ const router = Router();
 
 // Check-in (Athlete)
 router.post('/checkin', authorize([Role.ATHLETE]), async (req: AuthRequest, res) => {
+  console.log('--- RECEIVED CHECKIN REQUEST:', req.body);
   try {
     const userId = req.user!.id; // Authenticated athlete's USER ID
     

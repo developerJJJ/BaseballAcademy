@@ -10,7 +10,10 @@ import rapsodoRouter from './routes/rapsodo';
 import parentRouter from './routes/parent';
 import rulesRouter from './routes/rules';
 
-dotenv.config();
+import path from 'path';
+import fs from 'fs';
+
+dotenv.config({ path: path.resolve(__dirname, __dirname.includes('dist') ? '../../.env' : '../.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5000;

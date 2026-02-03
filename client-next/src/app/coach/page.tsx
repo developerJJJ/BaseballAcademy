@@ -40,7 +40,7 @@ export default function CoachDashboard() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/sessions/coach', {
+      const res = await fetch('/api/sessions/coach', {
         headers: {
           'x-user-id': '5',
           'x-academy-id': '1',
@@ -80,7 +80,7 @@ export default function CoachDashboard() {
     setActiveDuration(dur);
 
     try {
-      const res = await fetch(`http://localhost:5000/api/sessions/${sessions[0].id}/setup`, {
+      const res = await fetch(`/api/sessions/${sessions[0].id}/setup`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

@@ -29,10 +29,10 @@ export default function AdminDashboard() {
     setLoading(true);
     try {
       const [rulesRes, templatesRes] = await Promise.all([
-        fetch('http://localhost:5000/api/rules', {
+        fetch('/api/rules', {
           headers: { 'x-user-id': '8', 'x-academy-id': '1', 'x-user-role': 'ADMIN' }
         }),
-        fetch('http://localhost:5000/api/drills/templates', {
+        fetch('/api/drills/templates', {
           headers: { 'x-user-id': '8', 'x-academy-id': '1', 'x-user-role': 'ADMIN' }
         })
       ]);
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/api/rules', {
+      const res = await fetch('/api/rules', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export default function AdminDashboard() {
   const handleDelete = async (id: number) => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/rules/${id}`, {
+      const res = await fetch(`/api/rules/${id}`, {
         method: 'DELETE',
         headers: { 'x-user-id': '8', 'x-academy-id': '1', 'x-user-role': 'ADMIN' }
       });

@@ -39,7 +39,7 @@ export default function RapsodoPage() {
   const fetchData = () => {
     setLoading(true);
     setFormError('');
-    fetch('http://localhost:5000/api/rapsodo', {
+    fetch('/api/rapsodo', {
       headers: {
         'x-user-id': '5',
         'x-academy-id': '1',
@@ -91,7 +91,7 @@ export default function RapsodoPage() {
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/rapsodo/${id}`, {
+      const res = await fetch(`/api/rapsodo/${id}`, {
         method: 'DELETE',
         headers: {
           'x-user-id': '5',
@@ -113,8 +113,8 @@ export default function RapsodoPage() {
     }
 
     const url = editingEntry 
-      ? `http://localhost:5000/api/rapsodo/${editingEntry.id}` 
-      : 'http://localhost:5000/api/rapsodo';
+      ? `/api/rapsodo/${editingEntry.id}` 
+      : '/api/rapsodo';
     
     const method = editingEntry ? 'PUT' : 'POST';
 

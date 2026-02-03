@@ -95,7 +95,7 @@ export default function AthleteDashboard() {
   };
 
   const fetchSessions = () => {
-    fetch('http://localhost:5000/api/sessions/athlete', {
+    fetch('/api/sessions/athlete', {
       headers: {
         'x-user-id': '6',
         'x-academy-id': '1',
@@ -127,7 +127,7 @@ export default function AthleteDashboard() {
     if (!todaySession) return;
 
     try {
-      const res = await fetch('http://localhost:5000/api/sessions/complete-drill', {
+      const res = await fetch('/api/sessions/complete-drill', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

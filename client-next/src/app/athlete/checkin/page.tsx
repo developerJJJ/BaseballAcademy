@@ -62,7 +62,7 @@ export default function CheckInPage() {
     try {
       const conditionScore = Math.ceil((11 - fatigue) / 2);
       
-      const res = await fetch('http://localhost:5000/api/attendance/checkin', {
+      const res = await fetch('/api/attendance/checkin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

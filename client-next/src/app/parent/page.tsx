@@ -15,7 +15,7 @@ export default function ParentDashboard() {
   useEffect(() => {
     if (!user) return;
     
-    fetch('http://localhost:5000/api/parent/children', {
+    fetch('/api/parent/children', {
       headers: {
         'x-user-id': user.id, 
         'x-academy-id': user.academyId,

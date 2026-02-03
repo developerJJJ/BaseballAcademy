@@ -33,7 +33,7 @@ export default function GoalsPage() {
   const fetchGoals = () => {
     setLoading(true);
     setFormError('');
-    fetch('http://localhost:5000/api/goals', {
+    fetch('/api/goals', {
       headers: {
         'x-user-id': '5',
         'x-academy-id': '1',
@@ -81,7 +81,7 @@ export default function GoalsPage() {
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/goals/${id}`, {
+      const res = await fetch(`/api/goals/${id}`, {
         method: 'DELETE',
         headers: {
           'x-user-id': '5',
@@ -102,8 +102,8 @@ export default function GoalsPage() {
     }
 
     const url = editingGoal 
-      ? `http://localhost:5000/api/goals/${editingGoal.id}` 
-      : 'http://localhost:5000/api/goals';
+      ? `/api/goals/${editingGoal.id}` 
+      : '/api/goals';
     
     const method = editingGoal ? 'PUT' : 'POST';
 

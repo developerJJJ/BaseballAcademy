@@ -56,7 +56,7 @@ export default function DrillsPage() {
   const fetchDrills = () => {
     setLoading(true);
     setFormError('');
-    fetch('http://localhost:5000/api/drills', {
+    fetch('/api/drills', {
       headers: {
         'x-user-id': '5',
         'x-academy-id': '1',
@@ -114,7 +114,7 @@ export default function DrillsPage() {
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/drills/${id}`, {
+      const res = await fetch(`/api/drills/${id}`, {
         method: 'DELETE',
         headers: {
           'x-user-id': '5',
@@ -139,8 +139,8 @@ export default function DrillsPage() {
     }
 
     const url = editingDrill 
-      ? `http://localhost:5000/api/drills/${editingDrill.id}` 
-      : 'http://localhost:5000/api/drills';
+      ? `/api/drills/${editingDrill.id}` 
+      : '/api/drills';
     
     const method = editingDrill ? 'PUT' : 'POST';
 

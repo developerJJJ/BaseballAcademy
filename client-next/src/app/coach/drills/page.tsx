@@ -11,7 +11,8 @@ import {
   PlayCircle,
   Timer,
   ChevronRight,
-  Target
+  Target,
+  AlertCircle
 } from 'lucide-react';
 
 interface Drill {

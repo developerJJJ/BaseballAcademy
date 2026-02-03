@@ -13,9 +13,11 @@ router.post('/checkin', authorize([Role.ATHLETE]), async (req: AuthRequest, res)
     const userId = req.user!.id; // Authenticated athlete's USER ID
     
     // 1. Find AthleteProfile
+    console.log('--- Step 1: Finding athlete profile for user:', userId);
     const athleteProfile = await prisma.athleteProfile.findUnique({
       where: { userId },
     });
+    console.log('--- Step 2: Found profile:', !!athleteProfile);
 
     if (!athleteProfile) {
       return res.status(404).json({ error: '선수 프로필을 찾을 수 없습니다.' });
@@ -27,6 +29,7 @@ router.post('/checkin', authorize([Role.ATHLETE]), async (req: AuthRequest, res)
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
+    console.log('--- Step 3: Finding attendance for today...', today.toISOString());
     let attendance = await prisma.attendance.findFirst({
       where: {
         athleteId: athleteProfile.id,
@@ -44,10 +47,13 @@ router.post('/checkin', authorize([Role.ATHLETE]), async (req: AuthRequest, res)
           }
       }
     });
+    console.log('--- Step 4: Found attendance:', !!attendance);
 
     if (!attendance) {
       try {
+        console.log('--- Step 5: No attendance found, generating new session...');
         const newSession = await SessionService.generateAthleteSession(athleteProfile.id, new Date());
+        console.log('--- Step 6: New session generated, finding attendance again...');
         attendance = await prisma.attendance.findFirst({
           where: {
             sessionId: newSession.id,
@@ -72,8 +78,9 @@ router.post('/checkin', authorize([Role.ATHLETE]), async (req: AuthRequest, res)
     const { conditionScore, hasPain, painArea, workedOutYesterday, sleepHours, sleepQuality, program } = req.body;
 
     // 3. Determine "Force D" status
+    const score = conditionScore ? parseInt(conditionScore) : 5; // Initialize score here for logging
+    console.log('--- Step 7: Determining Force D status. Score:', score, 'Pain:', hasPain);
     let isForcedToD = false;
-    const score = conditionScore ? parseInt(conditionScore) : 5;
     if (score <= 2) isForcedToD = true;
     if (hasPain === true) isForcedToD = true;
 
@@ -82,7 +89,9 @@ router.post('/checkin', authorize([Role.ATHLETE]), async (req: AuthRequest, res)
     const currentWorkoutType = attendance.session.template.workoutType;
     let targetDuration = attendance.session.template.duration;
 
+    console.log('--- Step 8: Checking if Force D is required:', isForcedToD);
     if (isForcedToD) {
+      console.log('--- Step 9: Finding Recovery template for program:', program);
       const recoveryTemplate = await prisma.sessionTemplate.findFirst({
         where: {
           academyId: req.user!.academyId,
@@ -90,14 +99,17 @@ router.post('/checkin', authorize([Role.ATHLETE]), async (req: AuthRequest, res)
           duration: program === 'beginner' ? 'MIN_90' : 'MIN_120'
         }
       });
+      console.log('--- Step 10: Found recovery template:', !!recoveryTemplate);
       if (recoveryTemplate) {
         await prisma.session.update({
           where: { id: attendance.sessionId },
           data: { templateId: recoveryTemplate.id }
         });
+        console.log('--- Step 11: Session updated to Recovery.');
       }
     } else {
       const newDuration = program === 'beginner' ? 'MIN_90' : 'MIN_120';
+      console.log('--- Step 12: Normal check-in. Checking duration update:', newDuration);
       if (newDuration !== attendance.session.template.duration) {
         const matchingTemplate = await prisma.sessionTemplate.findFirst({
           where: {
@@ -106,15 +118,18 @@ router.post('/checkin', authorize([Role.ATHLETE]), async (req: AuthRequest, res)
             duration: newDuration
           }
         });
+        console.log('--- Step 13: Found matching template for new duration:', !!matchingTemplate);
         if (matchingTemplate) {
           await prisma.session.update({
             where: { id: attendance.sessionId },
             data: { templateId: matchingTemplate.id }
           });
+          console.log('--- Step 14: Session duration updated.');
         }
       }
     }
 
+    console.log('--- Step 15: Updating attendance record...');
     await prisma.attendance.update({
       where: { id: attendance.id },
       data: { 
@@ -129,6 +144,7 @@ router.post('/checkin', authorize([Role.ATHLETE]), async (req: AuthRequest, res)
         isForcedToD
       }
     });
+    console.log('--- Step 16: Attendance record updated. Sending response.');
 
     res.json({ status: 'success', sessionId: attendance.sessionId, isForcedToD });
   } catch (error: any) {

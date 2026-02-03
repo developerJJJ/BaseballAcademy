@@ -18,7 +18,8 @@
     "start:backend": "npm start -w backend",
     "start:frontend": "npm start -w client-next",
     "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w client-next\"",
-    "render-build": "npm install && npm run build"
+    "db:init": "npm run db:push -w backend && npm run seed -w backend",
+    "render-build": "npm install && npm run build && npm run db:init"
   },
   "dependencies": {
     "concurrently": "^9.1.2"

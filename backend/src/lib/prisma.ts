@@ -32,6 +32,8 @@ const getDbPath = () => {
     const dbUrl = process.env.DATABASE_URL || 'file:./prisma/dev.db';
     const filePath = dbUrl.replace('file:', '');
     if (path.isAbsolute(filePath)) return filePath;
+    
+    // Resolve relative path against the discovered backend directory
     return path.resolve(backendDir, filePath);
 };
 

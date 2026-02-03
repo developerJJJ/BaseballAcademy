@@ -172,7 +172,7 @@ export default function AthleteDashboard() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10 pb-20 relative">
+    <div className="max-w-5xl mx-auto space-y-10 pb-20 pt-20 lg:pt-0 relative">
       <header className="px-4 pt-4">
         <h1 className="text-3xl font-black text-slate-900 tracking-tight">{t('athlete.header_title')}</h1>
         <p className="text-slate-400 font-bold mt-1">{currentDateLabel}</p>

@@ -119,8 +119,8 @@ export default function CheckInPage() {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto min-h-screen bg-white">
-      <header className="px-8 py-10 flex items-center justify-between">
+    <div className="max-w-4xl mx-auto min-h-screen bg-white pt-20 lg:pt-0">
+      <header className="px-4 lg:px-8 py-10 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">
             {step === 1 ? t('checkin.title') : "컨디션 체크"}
@@ -140,7 +140,7 @@ export default function CheckInPage() {
         )}
       </header>
 
-      <main className="px-8 pb-12 space-y-10">
+      <main className="px-4 lg:px-8 pb-12 space-y-10">
         {error && (
           <div className="p-5 bg-red-50 text-red-600 rounded-2xl border border-red-100 text-sm font-bold flex items-center gap-3">
             <AlertCircle className="w-5 h-5" />

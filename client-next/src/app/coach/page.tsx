@@ -120,7 +120,7 @@ export default function CoachDashboard() {
   if (loading) return <div className="p-8 text-center text-slate-500 animate-pulse">{t('common.loading')}</div>;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-10 pb-20 relative">
+    <div className="max-w-6xl mx-auto space-y-10 pb-20 pt-20 lg:pt-0 relative">
       <header className="flex justify-between items-end px-4">
         <div>
           <h1 className="text-4xl font-black text-slate-900 tracking-tight">코치 대시보드</h1>

@@ -104,7 +104,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-10 pb-20 relative">
+    <div className="max-w-6xl mx-auto space-y-10 pb-20 pt-20 lg:pt-0 relative">
       <header className="border-b border-slate-200 pb-4">
         <h1 className="text-4xl font-black text-slate-900 tracking-tight">{t('admin.title')}</h1>
         <p className="text-slate-500 font-bold">{t('admin.subtitle')}</p>

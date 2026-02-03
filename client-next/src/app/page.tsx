@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
+import LanguageToggle from '@/components/ui/LanguageToggle';
 
 export default function RoleSelectionPage() {
   const { t } = useLanguage();
@@ -25,7 +26,10 @@ export default function RoleSelectionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-blue-50/30 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-blue-50/30 flex items-center justify-center p-6 relative">
+      <div className="absolute top-6 right-6 lg:top-10 lg:right-10">
+        <LanguageToggle />
+      </div>
       <div className="max-w-md w-full bg-white rounded-[2rem] shadow-2xl shadow-blue-100 p-12 space-y-10 border border-slate-50">
         
         {/* Logo & Brand */}

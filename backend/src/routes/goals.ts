@@ -5,6 +5,26 @@ import { Role } from '@prisma/client';
 
 const router = Router();
 
+// Athlete: get own goals
+router.get('/mine', authorize([Role.ATHLETE]), async (req: AuthRequest, res) => {
+  try {
+    const athleteProfile = await prisma.athleteProfile.findFirst({
+      where: { userId: req.user!.id }
+    });
+    if (!athleteProfile) {
+      return res.json([]);
+    }
+    const goals = await prisma.weeklyGoal.findMany({
+      where: { athleteId: athleteProfile.id },
+      include: { athlete: { include: { user: true } } }
+    });
+    res.json(goals);
+  } catch (err) {
+    console.error('Error fetching athlete goals:', err);
+    res.status(500).json({ error: 'Failed to fetch goals' });
+  }
+});
+
 router.get('/', authorize([Role.COACH, Role.ADMIN]), async (req: AuthRequest, res) => {
   const goals = await prisma.weeklyGoal.findMany({
     where: { athlete: { user: { academyId: req.user!.academyId } } },
@@ -32,7 +52,7 @@ router.post('/', authorize([Role.COACH, Role.ADMIN]), async (req: AuthRequest, r
 router.put('/:id', authorize([Role.COACH, Role.ADMIN]), async (req: AuthRequest, res) => {
   const id = req.params.id as string;
   const { goalType, targetValue, currentValue, memo, status } = req.body;
-  
+
   const goal = await prisma.weeklyGoal.update({
     where: { id: parseInt(id) },
     data: {

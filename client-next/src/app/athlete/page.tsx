@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { 
-  Clock, 
-  Dumbbell, 
-  Target, 
-  Zap, 
+import {
+  Clock,
+  Dumbbell,
+  Target,
+  Zap,
   ChevronRight,
   PlayCircle,
   X,
@@ -57,7 +57,8 @@ export default function AthleteDashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedDrill, setSelectedDrill] = useState<Drill | null>(null);
   const [currentDateLabel, setCurrentDateLabel] = useState('');
-  
+  const [activeDrillTab, setActiveDrillTab] = useState<'TRAINING' | 'WEIGHT'>('TRAINING');
+
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
 
@@ -119,7 +120,7 @@ export default function AthleteDashboard() {
 
   if (loading) return <div className="p-8 text-center text-slate-500">{t('common.loading')}</div>;
 
-  const todaySession = sessions.find(s => 
+  const todaySession = sessions.find(s =>
     new Date(s.date).toDateString() === new Date().toDateString()
   );
 
@@ -188,14 +189,14 @@ export default function AthleteDashboard() {
               <OverviewCard icon={Target} color="purple" label={t('athlete.program')} value={todaySession.selectedProgram === 'beginner' ? (language === 'ko' ? '비기너' : 'Beginner') : (language === 'ko' ? '엘리트' : 'Elite')} />
               <OverviewCard icon={Zap} color="orange" label={t('athlete.readiness')} value="79%" />
             </div>
-            
+
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-3">
               <div className="flex justify-between items-center px-1">
                 <span className="text-sm font-bold text-slate-400">{t('athlete.progress')}</span>
                 <span className="text-sm font-black text-slate-900">{completedCount}/{totalCount} {language === 'ko' ? '완료' : 'Completed'}</span>
               </div>
               <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="bg-slate-900 h-full transition-all duration-500"
                   style={{ width: `${progressPercent}%` }}
                 ></div>
@@ -205,37 +206,88 @@ export default function AthleteDashboard() {
 
           <section className="px-4 space-y-6">
             <h2 className="text-2xl font-black text-slate-900">{t('athlete.drill_list')}</h2>
+
+            {/* Category Tabs: 웨이트 / 훈련 드릴 */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => setActiveDrillTab('TRAINING')}
+                className={`px-6 py-3 rounded-2xl font-black text-sm transition-all ${activeDrillTab === 'TRAINING'
+                    ? 'bg-slate-900 text-white shadow-lg shadow-slate-200'
+                    : 'bg-white border border-slate-100 text-slate-400 hover:border-slate-200 hover:text-slate-600'
+                  }`}
+              >
+                {language === 'ko' ? '훈련 드릴' : 'Training Drills'}
+                <span className={`ml-2 px-2 py-0.5 rounded-lg text-[10px] font-black ${activeDrillTab === 'TRAINING' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400'
+                  }`}>
+                  {todaySession.template.drills.filter(td => td.drill.category !== 'CONDITIONING').length}
+                </span>
+              </button>
+              <button
+                onClick={() => setActiveDrillTab('WEIGHT')}
+                className={`px-6 py-3 rounded-2xl font-black text-sm transition-all ${activeDrillTab === 'WEIGHT'
+                    ? 'bg-slate-900 text-white shadow-lg shadow-slate-200'
+                    : 'bg-white border border-slate-100 text-slate-400 hover:border-slate-200 hover:text-slate-600'
+                  }`}
+              >
+                {language === 'ko' ? '웨이트' : 'Weight Training'}
+                <span className={`ml-2 px-2 py-0.5 rounded-lg text-[10px] font-black ${activeDrillTab === 'WEIGHT' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400'
+                  }`}>
+                  {todaySession.template.drills.filter(td => td.drill.category === 'CONDITIONING').length}
+                </span>
+              </button>
+            </div>
+
             <div className="grid gap-4">
-              {todaySession.template.drills.map((td, index) => {
-                const completion = todaySession.completedDrills.find(c => c.drillId === td.drillId);
-                const isCompleted = !!completion;
-                const completedTime = completion ? new Date(completion.completedAt).toLocaleTimeString(language === 'ko' ? 'ko-KR' : 'en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) : '';
+              {todaySession.template.drills
+                .filter(td => activeDrillTab === 'WEIGHT'
+                  ? td.drill.category === 'CONDITIONING'
+                  : td.drill.category !== 'CONDITIONING'
+                )
+                .map((td, index) => {
+                  const completion = todaySession.completedDrills.find(c => c.drillId === td.drillId);
+                  const isCompleted = !!completion;
+                  const completedTime = completion ? new Date(completion.completedAt).toLocaleTimeString(language === 'ko' ? 'ko-KR' : 'en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) : '';
 
-                const drillName = language === 'ko' ? td.drill.name : (td.drill.nameEn || td.drill.name);
-                const drillDesc = language === 'ko' ? td.drill.description : (td.drill.descriptionEn || td.drill.description);
+                  const drillName = language === 'ko' ? td.drill.name : (td.drill.nameEn || td.drill.name);
+                  const drillDesc = language === 'ko' ? td.drill.description : (td.drill.descriptionEn || td.drill.description);
 
-                return (
-                  <button key={index} onClick={() => setSelectedDrill(td)} className={`bg-white p-8 rounded-[2rem] border transition-all group flex items-start gap-6 text-left w-full ${isCompleted ? 'border-green-200 bg-green-50/20' : 'border-slate-100 shadow-sm hover:shadow-md'}`}>
-                    <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 transition-colors ${isCompleted ? 'border-green-500 bg-white' : 'border-slate-200 group-hover:border-blue-600'}`}>
-                      {isCompleted ? <CheckCircle2 className="w-7 h-7 text-green-500" /> : <div className="w-6 h-6 rounded-full border-2 border-slate-200 group-hover:border-blue-600"></div>}
-                    </div>
-                    <div className="flex-grow space-y-2">
-                      <div className="flex justify-between items-center">
-                        <h3 className="text-2xl font-black text-slate-900">{index + 1}. {drillName}</h3>
-                        <span className="px-3 py-1 text-[10px] font-black rounded-lg uppercase tracking-tighter bg-slate-100 text-slate-600">
-                          {td.drill.category === 'THROWING' ? (language === 'ko' ? '타격' : 'Hit') : (language === 'ko' ? '웨이트' : 'Weight')}
-                        </span>
+                  return (
+                    <button key={td.drillId} onClick={() => setSelectedDrill(td)} className={`bg-white p-8 rounded-[2rem] border transition-all group flex items-start gap-6 text-left w-full ${isCompleted ? 'border-green-200 bg-green-50/20' : 'border-slate-100 shadow-sm hover:shadow-md'}`}>
+                      <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 transition-colors ${isCompleted ? 'border-green-500 bg-white' : 'border-slate-200 group-hover:border-blue-600'}`}>
+                        {isCompleted ? <CheckCircle2 className="w-7 h-7 text-green-500" /> : <div className="w-6 h-6 rounded-full border-2 border-slate-200 group-hover:border-blue-600"></div>}
                       </div>
-                      <p className="text-slate-400 font-bold text-sm line-clamp-1">{drillDesc}</p>
-                      <div className="flex gap-4 pt-1">
-                        <div className="flex items-center gap-1.5 font-black text-slate-900"><FileTextIcon className="w-4 h-4 text-blue-600" /><span className="text-sm">{td.reps}{language === 'ko' ? '회' : 'r'} × {td.sets}{language === 'ko' ? '세트' : 's'}</span></div>
-                        <div className="flex items-center gap-1.5 font-black text-slate-900"><TimerIcon className="w-4 h-4 text-blue-600" /><span className="text-sm">{language === 'ko' ? '휴식' : 'Rest'} {td.notes || '120'}{language === 'ko' ? '초' : 's'}</span></div>
+                      <div className="flex-grow space-y-2">
+                        <div className="flex justify-between items-center">
+                          <h3 className="text-2xl font-black text-slate-900">{index + 1}. {drillName}</h3>
+                          <span className={`px-3 py-1 text-[10px] font-black rounded-lg uppercase tracking-tighter ${td.drill.category === 'CONDITIONING'
+                              ? 'bg-purple-100 text-purple-600'
+                              : 'bg-blue-100 text-blue-600'
+                            }`}>
+                            {td.drill.category === 'THROWING' ? (language === 'ko' ? '타격' : 'Hit') : td.drill.category === 'CONDITIONING' ? (language === 'ko' ? '웨이트' : 'Weight') : (language === 'ko' ? '움직임' : 'Movement')}
+                          </span>
+                        </div>
+                        <p className="text-slate-400 font-bold text-sm line-clamp-1">{drillDesc}</p>
+                        <div className="flex gap-4 pt-1">
+                          <div className="flex items-center gap-1.5 font-black text-slate-900"><FileTextIcon className="w-4 h-4 text-blue-600" /><span className="text-sm">{td.reps}{language === 'ko' ? '회' : 'r'} × {td.sets}{language === 'ko' ? '세트' : 's'}</span></div>
+                          <div className="flex items-center gap-1.5 font-black text-slate-900"><TimerIcon className="w-4 h-4 text-blue-600" /><span className="text-sm">{language === 'ko' ? '휴식' : 'Rest'} {td.notes || '120'}{language === 'ko' ? '초' : 's'}</span></div>
+                        </div>
+                        {isCompleted && <div className="text-green-600 font-bold text-sm pt-2 flex items-center gap-1.5 animate-in fade-in slide-in-from-left-2 duration-300"><span>✓</span><span>{completedTime} {language === 'ko' ? '완료' : 'Done'}</span></div>}
                       </div>
-                      {isCompleted && <div className="text-green-600 font-bold text-sm pt-2 flex items-center gap-1.5 animate-in fade-in slide-in-from-left-2 duration-300"><span>✓</span><span>{completedTime} {language === 'ko' ? '완료' : 'Done'}</span></div>}
-                    </div>
-                  </button>
-                );
-              })}
+                    </button>
+                  );
+                })}
+              {todaySession.template.drills
+                .filter(td => activeDrillTab === 'WEIGHT'
+                  ? td.drill.category === 'CONDITIONING'
+                  : td.drill.category !== 'CONDITIONING'
+                ).length === 0 && (
+                  <div className="py-16 text-center text-slate-300 font-bold">
+                    {activeDrillTab === 'WEIGHT'
+                      ? (language === 'ko' ? '오늘 웨이트 드릴이 없습니다' : 'No weight drills today')
+                      : (language === 'ko' ? '오늘 훈련 드릴이 없습니다' : 'No training drills today')
+                    }
+                  </div>
+                )}
             </div>
           </section>
         </div>

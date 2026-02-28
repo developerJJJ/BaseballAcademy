@@ -31,7 +31,7 @@ export default function Sidebar() {
     { name: t('sidebar.dashboard'), href: '/', icon: LayoutDashboard },
     { name: t('sidebar.checkin'), href: '/athlete/checkin', icon: CheckCircle2 },
     { name: t('sidebar.playbook'), href: '/athlete', icon: BookOpen },
-    { name: t('sidebar.weekly_goals'), href: '#', icon: Target },
+    { name: t('sidebar.weekly_goals'), href: '/athlete/goals', icon: Target },
   ];
 
   const coachItems = [

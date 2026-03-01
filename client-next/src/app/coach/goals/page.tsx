@@ -133,91 +133,131 @@ export default function GoalsPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-10 pb-20 relative">
-      <header className="flex justify-between items-center px-4">
+    <div className="max-w-6xl mx-auto space-y-10 pb-20 pt-20 lg:pt-0 relative">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-6 gap-6">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight">주간 목표 설정</h1>
-          <p className="text-slate-400 font-bold mt-1">선수별 주간 목표를 설정하고 관리하세요</p>
+          <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-tight">
+            주간 목표 <span className="text-blue-600">설정</span>
+          </h1>
+          <p className="text-slate-400 font-bold mt-1 text-sm lg:text-base">선수별 주간 목표를 설정하고 관리하세요</p>
         </div>
         <button 
           onClick={handleOpenAdd}
-          className="bg-slate-900 text-white px-6 py-3 rounded-2xl font-black flex items-center gap-2 hover:bg-slate-800 shadow-xl"
+          className="w-full sm:w-auto bg-slate-900 text-white px-8 py-4 rounded-[1.5rem] font-black flex items-center justify-center gap-3 hover:bg-blue-600 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-2xl shadow-blue-100/50 group"
         >
-          <Plus className="w-5 h-5" />
-          새 목표 추가
+          <div className="bg-white/20 p-1.5 rounded-lg group-hover:rotate-90 transition-transform duration-300">
+            <Plus className="w-5 h-5 text-white" />
+          </div>
+          <span className="whitespace-nowrap">새 목표 추가</span>
         </button>
       </header>
 
-      <div className="px-4 space-y-6">
+      <div className="px-6 space-y-8">
         {loading ? (
-          <div className="p-20 text-center text-slate-400 font-bold">로딩 중...</div>
+          <div className="p-20 text-center flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-slate-400 font-bold italic">데이터를 불러오는 중...</p>
+          </div>
         ) : (
           goals.map(goal => {
             const progress = Math.min(100, Math.round((goal.currentValue / goal.targetValue) * 100));
+            const isCompleted = goal.status === 'COMPLETED';
+            
             return (
-              <div key={goal.id} className="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-8 relative hover:shadow-md transition-all">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                      <Target className="w-6 h-6" />
+              <div key={goal.id} className="group bg-white p-10 rounded-[3rem] border border-slate-100 shadow-xl shadow-slate-200/20 space-y-8 relative hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-100/30 transition-all duration-500 overflow-hidden">
+                {/* Accent line */}
+                <div className={`absolute top-0 left-0 w-2 h-full ${isCompleted ? 'bg-blue-500' : 'bg-green-500'}`}></div>
+                
+                <div className="flex flex-col md:flex-row justify-between items-start gap-6">
+                  <div className="flex items-center gap-5">
+                    <div className={`w-16 h-16 rounded-[2rem] flex items-center justify-center shadow-inner ${isCompleted ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`}>
+                      <Target className="w-8 h-8" />
                     </div>
                     <div>
-                      <div className="flex items-center gap-3">
-                        <h3 className="text-2xl font-black text-slate-900">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <h3 className="text-3xl font-black text-slate-900 tracking-tight">
                           {goal.athlete.user.firstName} {goal.athlete.user.lastName}
                         </h3>
-                        <span className={`px-3 py-1 rounded-full text-xs font-black ${
-                          goal.status === 'COMPLETED' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
+                        <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${
+                          isCompleted ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-green-100 text-green-700'
                         }`}>
-                          {goal.status === 'COMPLETED' ? '완료' : '진행 중'}
+                          {isCompleted ? '완료됨' : '진행 중'}
                         </span>
                       </div>
-                      <p className="text-slate-400 font-bold">{goal.goalType}</p>
+                      <p className="text-slate-400 font-black text-xs uppercase tracking-widest mt-1">{goal.goalType}</p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  
+                  <div className="flex gap-3 w-full md:w-auto">
                     <button 
                       onClick={() => handleOpenEdit(goal)}
-                      className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all"
+                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-4 bg-slate-50 text-slate-500 font-bold rounded-2xl hover:bg-blue-50 hover:text-blue-600 transition-all border border-transparent hover:border-blue-100"
                     >
                       <Edit2 className="w-5 h-5" />
+                      <span className="md:hidden">편집</span>
                     </button>
                     <button 
                       onClick={() => handleDelete(goal.id)}
-                      className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-red-50 hover:text-red-600 transition-all"
+                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-4 bg-slate-50 text-slate-500 font-bold rounded-2xl hover:bg-red-50 hover:text-red-600 transition-all border border-transparent hover:border-red-100"
                     >
                       <Trash2 className="w-5 h-5" />
+                      <span className="md:hidden">삭제</span>
                     </button>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-12">
-                  <div>
-                    <span className="text-xs font-bold text-slate-400 uppercase">목표</span>
-                    <p className="text-2xl font-black text-slate-900">{goal.targetValue} {goal.goalType.includes('체중') ? 'kg' : 'mph'}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+                  <div className="bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-2">목표 수치</span>
+                    <p className="text-3xl font-black text-slate-900 tracking-tighter">
+                      {goal.targetValue} 
+                      <span className="text-base font-bold text-slate-400 ml-1.5">
+                        {goal.goalType.includes('체중') ? 'kg' : 'mph'}
+                      </span>
+                    </p>
                   </div>
-                  <div>
-                    <span className="text-xs font-bold text-slate-400 uppercase">현재</span>
-                    <p className="text-2xl font-black text-slate-900">{goal.currentValue} {goal.goalType.includes('체중') ? 'kg' : 'mph'}</p>
+                  <div className="bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-2">현재 수치</span>
+                    <p className="text-3xl font-black text-slate-900 tracking-tighter">
+                      {goal.currentValue} 
+                      <span className="text-base font-bold text-slate-400 ml-1.5">
+                        {goal.goalType.includes('체중') ? 'kg' : 'mph'}
+                      </span>
+                    </p>
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-slate-400">진행률</span>
-                    <span className="text-xs font-black text-blue-600">{progress}%</span>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">달성률</span>
+                      <p className={`text-4xl font-black tracking-tighter ${isCompleted ? 'text-blue-600' : 'text-slate-900'}`}>{progress}%</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">상태</span>
+                      <p className="text-sm font-black text-slate-900">{isCompleted ? 'GOAL REACHED' : 'ON TRACK'}</p>
+                    </div>
                   </div>
-                  <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                  <div className="w-full bg-slate-100 h-4 rounded-full p-1 shadow-inner">
                     <div 
-                      className={`h-full transition-all duration-1000 ${goal.status === 'COMPLETED' ? 'bg-blue-600' : 'bg-blue-600'}`} 
+                      className={`h-full rounded-full transition-all duration-1000 relative ${isCompleted ? 'bg-gradient-to-r from-blue-500 to-blue-600' : 'bg-gradient-to-r from-blue-400 to-blue-500'}`} 
                       style={{ width: `${progress}%` }}
-                    ></div>
+                    >
+                      <div className="absolute top-0 right-0 w-2 h-full bg-white/30 rounded-full"></div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="bg-slate-50 p-5 rounded-2xl">
-                  <p className="text-sm font-bold text-slate-500">{goal.memo || '메모가 없습니다'}</p>
-                </div>
+                {goal.memo && (
+                  <div className="bg-blue-50/30 p-8 rounded-[2rem] border border-blue-50 relative">
+                    <div className="absolute top-4 left-6">
+                      <svg className="w-6 h-6 text-blue-100 fill-current" viewBox="0 0 24 24">
+                        <path d="M14.017 21L14.017 18C14.017 16.8954 13.1216 16 12.017 16H8.01703C6.91246 16 6.01703 16.8954 6.01703 18V21H4.01703V18C4.01703 15.7909 5.8079 14 8.01703 14H12.017C14.2262 14 16.017 15.7909 16.017 18V21H14.017Z" />
+                      </svg>
+                    </div>
+                    <p className="text-sm font-bold text-slate-600 leading-relaxed italic">" {goal.memo} "</p>
+                  </div>
+                )}
               </div>
             );
           })

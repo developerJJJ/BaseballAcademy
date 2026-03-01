@@ -172,7 +172,7 @@ export default function DrillsPage() {
   const categories = Array.from(new Set(drills.map(d => d.category)));
 
   return (
-    <div className="max-w-6xl mx-auto space-y-10 pb-20 relative">
+    <div className="max-w-6xl mx-auto space-y-10 pb-20 pt-20 lg:pt-0 relative">
       <header className="flex justify-between items-center px-4">
         <div>
           <h1 className="text-4xl font-black text-slate-900 tracking-tight">드릴 템플릿 관리</h1>
@@ -180,10 +180,12 @@ export default function DrillsPage() {
         </div>
         <button 
           onClick={handleOpenAdd}
-          className="bg-slate-900 text-white px-6 py-3 rounded-2xl font-black flex items-center gap-2 hover:bg-slate-800 transition-all shadow-xl shadow-slate-200"
+          className="w-full sm:w-auto bg-slate-900 text-white px-8 py-4 rounded-[1.5rem] font-black flex items-center justify-center gap-3 hover:bg-blue-600 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-2xl shadow-blue-100/50 group"
         >
-          <Plus className="w-5 h-5" />
-          새 드릴 추가
+          <div className="bg-white/20 p-1.5 rounded-lg group-hover:rotate-90 transition-transform duration-300">
+            <Plus className="w-5 h-5 text-white" />
+          </div>
+          <span className="whitespace-nowrap">새 드릴 추가</span>
         </button>
       </header>
 

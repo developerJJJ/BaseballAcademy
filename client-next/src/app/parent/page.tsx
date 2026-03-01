@@ -33,7 +33,7 @@ export default function ParentDashboard() {
   if (loading) return <div className="p-8 text-center text-slate-500 animate-pulse">{t('common.loading')}</div>;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-10 pb-20">
+    <div className="max-w-6xl mx-auto space-y-10 pb-20 pt-20 lg:pt-0 relative">
       <header className="px-4">
         <h1 className="text-4xl font-black text-slate-900 tracking-tight">{t('parent.title')}</h1>
         <p className="text-slate-400 font-bold mt-1">{t('parent.subtitle')}</p>

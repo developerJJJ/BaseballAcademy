@@ -295,36 +295,61 @@ function AthleteDrillItem({ text, completed }: { text: string, completed?: boole
 
 function WorkoutTypeBtn({ active, onClick, label, desc, color }: any) {
   const colors: any = {
-    blue: "border-blue-600 bg-blue-50 text-blue-700",
-    green: "border-green-600 bg-green-50 text-green-700",
-    yellow: "border-yellow-500 bg-yellow-50 text-yellow-700",
-    purple: "border-purple-600 bg-purple-50 text-purple-700"
+    blue: "border-blue-600 bg-blue-50/50 text-blue-700 shadow-lg shadow-blue-100/50",
+    green: "border-green-600 bg-green-50/50 text-green-700 shadow-lg shadow-green-100/50",
+    yellow: "border-yellow-500 bg-yellow-50/50 text-yellow-700 shadow-lg shadow-yellow-100/50",
+    purple: "border-purple-600 bg-purple-50/50 text-purple-700 shadow-lg shadow-purple-100/50"
   };
   return (
-    <button onClick={onClick} className={`p-5 rounded-3xl border-2 transition-all text-left space-y-1 ${active ? colors[color] : 'border-slate-50 bg-white text-slate-400 hover:border-slate-200'}`}>
-      <p className="font-black text-lg leading-tight">{label}</p>
-      <p className="text-[10px] font-bold opacity-70 uppercase tracking-tighter">{desc}</p>
+    <button 
+      onClick={onClick} 
+      className={`p-6 rounded-[2rem] border-2 transition-all text-left space-y-1.5 active:scale-95 group relative overflow-hidden ${
+        active 
+          ? colors[color] 
+          : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200 hover:bg-slate-50/50'
+      }`}
+    >
+      <div className="relative z-10">
+        <p className="font-black text-xl leading-tight tracking-tight">{label}</p>
+        <p className="text-[10px] font-black opacity-60 uppercase tracking-widest">{desc}</p>
+      </div>
+      {active && (
+        <div className="absolute -right-2 -bottom-2 opacity-10 group-hover:scale-120 transition-transform">
+          <Zap className="w-12 h-12" />
+        </div>
+      )}
     </button>
   );
 }
 
 function DurationBtn({ active, onClick, label }: any) {
   return (
-    <button onClick={onClick} className={`p-4 rounded-2xl border-2 font-black transition-all ${active ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-50 bg-white text-slate-400 hover:border-slate-200'}`}>
+    <button 
+      onClick={onClick} 
+      className={`p-4 rounded-2xl border-2 font-black transition-all active:scale-95 ${
+        active 
+          ? 'border-slate-900 bg-slate-900 text-white shadow-xl shadow-slate-200' 
+          : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200 hover:text-slate-600 shadow-sm'
+      }`}
+    >
       {label}
     </button>
   );
 }
 
 function SummaryCard({ label, value, icon: Icon, color }: { label: string, value: string, icon: any, color: string }) {
-  const styles: any = { blue: "text-blue-600", green: "text-green-600", red: "text-red-600" };
+  const styles: any = { 
+    blue: "text-blue-600 bg-blue-50/50", 
+    green: "text-green-600 bg-green-50/50", 
+    red: "text-red-500 bg-red-50/50" 
+  };
   return (
-    <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm flex justify-between items-center group hover:shadow-md transition-all">
+    <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/20 flex justify-between items-center group hover:shadow-2xl hover:shadow-blue-100/30 transition-all duration-500">
       <div className="space-y-1">
-        <p className="text-sm font-bold text-slate-400 uppercase tracking-wider">{label}</p>
-        <p className="text-4xl font-black text-slate-900">{value}</p>
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{label}</p>
+        <p className="text-5xl font-black text-slate-900 tracking-tighter">{value}</p>
       </div>
-      <div className={`p-4 rounded-3xl bg-slate-50 group-hover:scale-110 transition-transform ${styles[color]}`}>
+      <div className={`p-5 rounded-[1.5rem] ${styles[color]} group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-inner`}>
         <Icon className="w-10 h-10" />
       </div>
     </div>
